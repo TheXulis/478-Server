@@ -19,5 +19,11 @@
   "bugs": {
     "url": "https://github.com/TheXulis/478-Server/issues"
   },
-  "homepage": "https://github.com/TheXulis/478-Server#readme"
+  "homepage": "https://github.com/TheXulis/478-Server#readme",
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  },
+  "dependencies": {
+    "express": "^4.16.2"
+  }
 }
