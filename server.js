@@ -1,12 +1,19 @@
-var express = require('express');
-var httpApp = express();
-var httpsApp = express();
-var http = require('http');
-var https = require('https');
-var fs = require('fs');
+let express = require('express');
+let httpApp = express();
+let httpsApp = express();
+let http = require('http');
+let https = require('https');
+let fs = require('fs');
+let helmet = require('helmet');
+let mongoose = require('mongoose');
+let Task = require('./api/models/todoListModel');
+let bodyParser = require('body-parser');
 
-var helmet = require('helmet');
-var ONE_YEAR = 31536000000;
+//Mongoose instance connection url connection
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost/Tododb', { useMongoClient: true });
+
+const ONE_YEAR = 31536000000;
 
 httpsApp.use(helmet.hsts({
 	maxAge: ONE_YEAR,
@@ -14,7 +21,7 @@ httpsApp.use(helmet.hsts({
 	force: true
 }));
 
-var cipher = ['ECDHE-ECDSA-AES256-GCM-SHA384',
+let cipher = ['ECDHE-ECDSA-AES256-GCM-SHA384',
 		'ECDHE-RSA-AES256-GCM-SHA384',
 		'ECDHE-RSA-AES256-CBC-SHA384',
 		'ECDHE-RSA-AES256-CBC-SHA256',
@@ -26,6 +33,17 @@ var cipher = ['ECDHE-ECDSA-AES256-GCM-SHA384',
 		'!MD5',
 		'!DSS'].join(':');
 
+//Connecting to mongoose
+httpApp.use(bodyParser.urlencoded({ extended: true }));
+httpsApp.use(bodyParser.urlencoded({ extended: true }));
+
+httpApp.use(bodyParser.json());
+httpsApp.use(bodyParser.json());
+
+let routes = require('./api/routes/todoListRoutes');
+routes(httpsApp);
+routes(httpApp);
+
 httpApp.get("*", function(req, res, next){
 	res.redirect('https://' + req.headers.host + req.url);
 });
@@ -34,7 +52,7 @@ httpsApp.get('/', function(req, res){
 	res.send('You are in the right place.');
 });
 
-var options = {
+let options = {
 	key: fs.readFileSync('/etc/letsencrypt/live/end2endchat.me-0001/privkey.pem'),
 	cert: fs.readFileSync('/etc/letsencrypt/live/end2endchat.me-0001/fullchain.pem'),
 	ciphers: cipher
