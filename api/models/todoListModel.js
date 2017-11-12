@@ -8,16 +8,15 @@ var UserSchema = new Schema({
     type: String,
     required: 'Please enter a username'
   },
-  Created_date: {
-    type: Date,
-    default: Date.now
+  salt: {
+    type: String
   },
-  status: {
-    type: [{
-      type: String,
-      enum: ['pending', 'ongoing', 'completed']
-    }],
-    default: ['pending']
+  hashedPW: {
+    type: String,
+    required: 'Please enter a password'
+  },
+  challenge: {
+    type: String
   }
 });
 
