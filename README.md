@@ -1,3 +1,5 @@
-478 Server is finally working
+RESTful server.
+
+Writen on Node.js with Express.
 
 
