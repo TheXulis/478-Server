@@ -68,7 +68,7 @@ exports.login_part_one = function(req, res) {
 		user.challenge = crypto.randomBytes(256).toString('hex');
 		user.save();
 
-		res.json({hashedPW:user.hashedPW, challenge:user.challenge});
+		res.json({salt:user.salt, challenge:user.challenge});
         });
 
 };
