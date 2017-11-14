@@ -8,6 +8,8 @@ let helmet = require('helmet');
 let mongoose = require('mongoose');
 let Task = require('./api/models/todoListModel');
 let bodyParser = require('body-parser');
+let expressJWT = require('express-jwt');
+let jwt = require('jsonwebtoken');
 
 //Mongoose instance connection url connection
 mongoose.Promise = global.Promise;
@@ -39,6 +41,8 @@ httpsApp.use(bodyParser.urlencoded({ extended: true }));
 
 httpApp.use(bodyParser.json());
 httpsApp.use(bodyParser.json());
+
+httpsApp.use(expressJWT({ secret: 'something' }).unless({ path: ['/login1', '/login2']}));
 
 let routes = require('./api/routes/todoListRoutes');
 routes(httpsApp);

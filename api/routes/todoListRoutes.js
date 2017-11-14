@@ -2,10 +2,16 @@
 module.exports = function(app) {
   var todoList = require('../controllers/todoListController');
 
-  // todoList Routes
   app.route('/users')
     .get(todoList.list_all_users)
     .post(todoList.create_a_user);
+
+
+  app.route('/login1')
+    .post(todoList.login_part_one);
+
+  app.route('/login2')
+    .post(todoList.login_part_two);
 
 
   app.route('/users/:userId')
