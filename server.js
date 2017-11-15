@@ -42,7 +42,7 @@ httpsApp.use(bodyParser.urlencoded({ extended: true }));
 httpApp.use(bodyParser.json());
 httpsApp.use(bodyParser.json());
 
-httpsApp.use(expressJWT({ secret: 'something' }).unless({ path: ['/login1', '/login2']}));
+httpsApp.use(expressJWT({ secret: 'something' }).unless({ path: ['/login1', '/login2', '/register']}));
 
 let routes = require('./api/routes/todoListRoutes');
 routes(httpsApp);

@@ -75,16 +75,25 @@ exports.login_part_one = function(req, res) {
 
 exports.login_part_two = function(req, res) {
 	let query = User.findOne({name:req.body.name},  function(err,user) {
-		let hmacBuffer = new buffer(user.hashedPW, 'binary');
+		/*
+		let hmacBuffer = new Buffer(user.hashedPW, 'binary');
 		let hmac = crypto.createHmac('sha512', hmacBuffer);
 		hmac.update(user.challenge);
 		let HMACtag = hmac.digest('hex');
 
-		if(req.body.tag != HMACtag)
+		console.log('challenge: ' +  user.challenge);
+		console.log('HashedPW: ' + user.hashedPW);
+		console.log('Salt: ' + user.salt);
+		console.log('tag: ' + HMACtag);
+		*/
+
+		if(req.body.hashedPW.toString('hex').valueOf() !== user.hashedPW.toString('hex').valueOf())
 			res.json({message: 'Username or password was incorrect'});
 		else{
-			var myToken = jwt.sign({ username: req.body.name }, 'something');
-			res.json({}).
+
+			let myToken = jwt.sign({ username: req.body.name }, 'something');
+			res.json(myToken);
 		}
+	});
 };
 

@@ -24,6 +24,7 @@
     "nodemon": "^1.12.1"
   },
   "dependencies": {
+    "date": "^1.0.2",
     "express": "^4.16.2",
     "express-jwt": "^5.3.0",
     "helmet": "^3.9.0",
