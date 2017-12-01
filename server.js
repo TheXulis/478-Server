@@ -43,7 +43,6 @@ httpApp.use(bodyParser.json());
 httpsApp.use(bodyParser.json());
 
 let publicKey = fs.readFileSync('/home/blove/public_key.pem','utf8');
-console.log(publicKey);
 
 httpsApp.use(expressJWT({ secret: publicKey }).unless({ path: ['/login1', '/login2', '/register']}));
 
