@@ -16,21 +16,33 @@ exports.list_all_users = function(req, res){
 };
 
 exports.create_a_user = function(req, res) {
-	let salt1 = crypto.randomBytes(256).toString('hex');
 
-	//hashing password with salt
-	let hashedPassword = crypto.pbkdf2Sync(req.body.password, salt1, 100000, 256, 'sha512');
+	let query = User.findOne({name:req.body.name}, function(err, user){
 
-	//Set up the user information
-	let info = {name:req.body.name, salt:salt1, hashedPW:hashedPassword.toString('hex'), challenge: "0"};
-	console.log(hashedPassword.toString('hex'));
+		if(user != null){
+			console.log(user.name);
+			console.log(user.id);
+			res.json({message: "User already exists"});
+		} else{
+			let salt1 = crypto.randomBytes(256).toString('hex');
 
-	//Add the user
-	let new_user = new User(info);
-	new_user.save(function(err, user){
-		if(err)
-			res.send(err);
-		res.json(user);
+			console.log(req.body.name);
+
+			//hashing password with salt
+			let hashedPassword = crypto.pbkdf2Sync(req.body.password, salt1, 100000, 256, 'sha512');
+
+			//Set up the user information
+			let info = {name:req.body.name, salt:salt1, hashedPW:hashedPassword.toString('hex'), challenge: "0"};
+			console.log(hashedPassword.toString('hex'));
+
+			//Add the user
+			let new_user = new User(info);
+			new_user.save(function(err, user){
+				if(err)
+					res.json({message: "Failedy"});
+				res.json({message: "Worked"});
+			});
+		};
 	});
 };
 
