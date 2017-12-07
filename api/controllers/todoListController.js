@@ -22,7 +22,7 @@ exports.create_a_user = function(req, res) {
 		if(user != null){
 			console.log(user.name);
 			console.log(user.id);
-			res.json({message: "User already exists"});
+			res.json({message: "Failed", error:"User already exists."});
 		} else{
 			let salt1 = crypto.randomBytes(256).toString('hex');
 
@@ -39,7 +39,7 @@ exports.create_a_user = function(req, res) {
 			let new_user = new User(info);
 			new_user.save(function(err, user){
 				if(err)
-					res.json({message: "Failedy"});
+					res.json({message: "Failed", error:err});
 				res.json({message: "Worked"});
 			});
 		};
@@ -77,13 +77,17 @@ exports.login_part_one = function(req, res) {
 		if(err)
 			res.send(err);
 
-		//Update challenge
-		user.challenge = crypto.randomBytes(256).toString('hex');
-		user.save();
+		if(user == null){
+			res.json({message:"Failed", error1:"User does not exist"});
+		}else{
+			//Update challenge
+			user.challenge = crypto.randomBytes(256).toString('hex');
+			user.save();
 
-		console.log(req.body.name);
+			console.log(req.body.name);
 
-		res.json({salt:user.salt, challenge:user.challenge});
+			res.json({message:"Worked", salt:user.salt, challenge:user.challenge});
+		}
         });
 
 };
@@ -107,11 +111,11 @@ exports.login_part_two = function(req, res) {
 		let privateKey = fs.readFileSync('/home/blove/private_key.pem','utf8');
 
 		if(req.body.hashedPW.toString('hex').valueOf() !== user.hashedPW.toString('hex').valueOf())
-			res.json({message: 'Username or password was incorrect'});
+			res.json({message:'Failed', error2: 'Username/password combo was incorrect'});
 		else{
 
 			let myToken = jwt.sign({ username: req.body.name }, privateKey, {algorithm: 'RS256', expiresIn: "30 days"});
-			res.json({token:myToken});
+			res.json({message:'Worked', token:myToken});
 		}
 	});
 };
