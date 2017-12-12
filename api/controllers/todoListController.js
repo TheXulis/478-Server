@@ -7,6 +7,22 @@ let expressJWT = require('express-jwt');
 let jwt = require('jsonwebtoken');
 let fs = require('fs');
 
+exports.getServer = function(req, res){
+
+};
+
+exports.post_user_pub_key = function(req, res){
+	console.log(req.body);
+	User.findOneAndUpdate({name:req.body.name}, {$set:{publicKey:req.body.publickey}}, {new:true}, function(err, user){
+		if(err) res.send(err);
+		res.json({message: "worked", user:user});
+	});
+};
+
+exports.get_user_pub_key = function(req, res){
+
+};
+
 exports.list_all_users = function(req, res){
 	User.find({}, function(err, user){
 		if (err)

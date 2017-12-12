@@ -15,6 +15,12 @@ module.exports = function(app) {
   app.route('/login2')
     .post(todoList.login_part_two);
 
+  app.route('/pubKey')
+    .post(todoList.post_user_pub_key)
+    .get(todoList.get_user_pub_key);
+
+  app.route('/server')
+    .get(todoList.getServer);
 
   app.route('/users/:userId')
     .get(todoList.read_a_user)

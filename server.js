@@ -44,7 +44,7 @@ httpsApp.use(bodyParser.json());
 
 let publicKey = fs.readFileSync('/home/blove/public_key.pem','utf8');
 
-httpsApp.use(expressJWT({ secret: publicKey }).unless({ path: ['/login1', '/login2', '/register']}));
+httpsApp.use(expressJWT({ secret: publicKey }).unless({ path: ['/login1', '/login2', '/register', '/pubKey']}));
 
 let routes = require('./api/routes/todoListRoutes');
 routes(httpsApp);
