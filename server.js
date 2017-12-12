@@ -6,10 +6,11 @@ let https = require('https');
 let fs = require('fs');
 let helmet = require('helmet');
 let mongoose = require('mongoose');
-let Task = require('./api/models/todoListModel');
+let Users = require('./api/models/todoListModel');
 let bodyParser = require('body-parser');
 let expressJWT = require('express-jwt');
 let jwt = require('jsonwebtoken');
+let ws = require('ws');
 
 //Mongoose instance connection url connection
 mongoose.Promise = global.Promise;
@@ -65,6 +66,107 @@ let options = {
 };
 
 http.createServer(httpApp).listen(8080);
-https.createServer(options, httpsApp).listen(3000);
+const httpsServer = https.createServer(options, httpsApp).listen(3000);
 
 console.log('Running server on ports 8080 and 3000');
+
+let userMap = {};
+let chatMap = {};
+const wss = new ws.Server({ server: httpsServer,
+
+	//Verify that this user has a valid jwt token
+	verifyClient: function(info){
+
+		return jwt.verify(info.req.headers.authorization, publicKey, {complete:true}, function(err, decoded){
+                        console.log("Verifying Token . . .");
+
+                        if(!decoded){
+                                console.log('Invalid token');
+                                ws.send('Invalid token');
+
+                                //return false for invalid token
+                                return false;
+                        } else {
+                                let dToken = jwt.decode(info.req.headers.authorization, {complete:true});
+                                console.log("Valid Token from " + dToken.payload.username);
+                                console.log('From a valid token bearer');
+				return true;
+                        }
+		});
+	}
+ });
+
+wss.on('connection', function connection(ws, req){
+
+	ws.on('message', function incoming(message){
+		let object = JSON.parse(message);
+		console.log("Received message. Type: " + object.type);
+
+
+		//If this is the first message received from this socket, initialize the variables
+		if(object.type === "initializeUser"){
+			console.log("Initializing websocket for: " + object.user);
+			ws.username = object.user;
+			userMap[object.user] = ws;
+		} else if(object.type === "requestChat"){
+
+			//What is the name of the other user in the chat
+			console.log(object.receiver);
+
+			let data = JSON.stringify({type:"requestingChat", from:ws.username });
+			let connection = userMap[object.receiver];
+
+			console.log(connection);
+
+			connection.send(data);
+			//Find the id of who we wish to send to
+			//console.log(userMap[object.receiver]);
+			//console.log(userMap);
+
+		} else if(object.type === "initializeChatFirst"){
+
+			//Set some attributes of this websocket
+			ws.username = object.user;
+			ws.othername = object.other;
+			ws.thischat = object.user + object.other;
+			ws.otherchat = object.other + object.user;
+
+			//Add chat to the chatMap
+			chatMap[ws.thischat] = ws;
+
+			//Send info to start the chat at the other end
+			let info = JSON.stringify({type:"chat:acceptedSecond", other: object.user, user: object.other});
+			let connection = userMap[object.other];
+			connection.send(info);
+
+		} else if(object.type === "initializeChatSecond"){
+
+			//Set some attributes of this websocket
+			ws.username = object.user;
+			ws.othername = object.other;
+			ws.thischat = object.user + object.other;
+			ws.otherchat = object.other + object.user;
+
+			//Add chat to the chatMap
+			chatMap[ws.thischat] = ws;
+
+		} else if(object.type === "message"){
+			console.log(object);
+			//Send the message to the other connection
+			let connection = chatMap[ws.otherchat]
+
+			let data = JSON.stringify({message:object.message});
+			connection.send(data);
+
+		} else {
+			console.log("error");
+		}
+
+
+	});
+
+	ws.on('close', function close(){
+		console.log(ws.username + " user just disconnected");
+	});
+
+});

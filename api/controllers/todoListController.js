@@ -130,7 +130,7 @@ exports.login_part_two = function(req, res) {
 			res.json({message:'Failed', error2: 'Username/password combo was incorrect'});
 		else{
 
-			let myToken = jwt.sign({ username: req.body.name }, privateKey, {algorithm: 'RS256', expiresIn: "30 days"});
+			let myToken = jwt.sign({ username: req.body.name }, privateKey, {algorithm: 'RS256', expiresIn: "1 days"});
 			res.json({message:'Worked', token:myToken});
 		}
 	});
