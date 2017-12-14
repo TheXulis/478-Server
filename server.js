@@ -166,7 +166,7 @@ wss.on('connection', function connection(ws, req){
 	});
 
 	ws.on('close', function close(){
-		console.log(ws.username + " user just disconnected");
+		console.log("User: " + ws.username + " just disconnected");
 	});
 
 });

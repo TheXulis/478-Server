@@ -3,9 +3,6 @@
 module.exports = function(app) {
   var todoList = require('../controllers/todoListController');
 
-  app.route('/users')
-    .get(todoList.list_all_users);
-
   app.route('/register')
     .post(todoList.create_a_user);
 
@@ -15,16 +12,15 @@ module.exports = function(app) {
   app.route('/login2')
     .post(todoList.login_part_two);
 
-  app.route('/pubKey')
-    .post(todoList.post_user_pub_key)
-    .get(todoList.get_user_pub_key);
-
-  app.route('/server')
-    .get(todoList.getServer);
+//For debugging purposes
+/*
+  app.route('/users')
+    .get(todoList.list_all_users);
 
   app.route('/users/:userId')
     .get(todoList.read_a_user)
     .put(todoList.update_a_user)
     .delete(todoList.delete_a_user);
+*/
 };
 

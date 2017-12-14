@@ -7,22 +7,7 @@ let expressJWT = require('express-jwt');
 let jwt = require('jsonwebtoken');
 let fs = require('fs');
 
-exports.getServer = function(req, res){
-
-};
-
-exports.post_user_pub_key = function(req, res){
-	console.log(req.body);
-	User.findOneAndUpdate({name:req.body.name}, {$set:{publicKey:req.body.publickey}}, {new:true}, function(err, user){
-		if(err) res.send(err);
-		res.json({message: "worked", user:user});
-	});
-};
-
-exports.get_user_pub_key = function(req, res){
-
-};
-
+/*
 exports.list_all_users = function(req, res){
 	User.find({}, function(err, user){
 		if (err)
@@ -30,6 +15,7 @@ exports.list_all_users = function(req, res){
 		res.json(user);
 	});
 };
+*/
 
 exports.create_a_user = function(req, res) {
 
@@ -63,6 +49,7 @@ exports.create_a_user = function(req, res) {
 };
 
 
+/*
 exports.read_a_user = function(req, res) {
 	User.findById(req.params.userId, function(err, user){
 		if(err)
@@ -86,7 +73,7 @@ exports.delete_a_user = function(req, res) {
 		res.json({ message: 'User successfully deleted' });
         });
 };
-
+*/
 
 exports.login_part_one = function(req, res) {
 	let query = User.findOne({name:req.body.name},  function(err,user) {
